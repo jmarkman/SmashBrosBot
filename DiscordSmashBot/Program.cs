@@ -25,32 +25,7 @@ namespace DiscordSmashBot
 
         public async Task MainAsync()
         {
-            _client = new DiscordSocketClient();
-            _client.Log += Log;
-            _client.MessageReceived += MessageReceived;
-
-            await _client.LoginAsync(TokenType.Bot, _config["ApiToken"]);
-            await _client.StartAsync();
-
-            // Block MainAsync from "completing" until the program is closed,
-            // i.e., the bot's existence is a task and once the task is done,
-            // the bot is subsequently deactivated
             await Task.Delay(-1);
         }
-
-        private async Task MessageReceived(SocketMessage message)
-        {
-            if (message.Content == "!ping")
-            {
-                await message.Channel.SendMessageAsync("Pong!");
-            }
-        }
-
-        private Task Log(LogMessage msg)
-        {
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
-        }
-
     }
 }

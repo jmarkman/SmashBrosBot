@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DiscordSmashBot.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -36,6 +37,13 @@ namespace DiscordSmashBot
             ConfigureBotServices(services);
 
             var provider = services.BuildServiceProvider();
+            provider.GetRequiredService<LoggingService>();
+            provider.GetRequiredService<CommandHandlerService>();
+
+            // Block RunAsync from "completing" until the program is closed,
+            // i.e., the bot's existence is a task and once the task is done,
+            // the bot is subsequently deactivated
+            await Task.Delay(-1);
         }
 
         private void ConfigureBotServices(IServiceCollection services)
@@ -49,7 +57,11 @@ namespace DiscordSmashBot
             {
                 LogLevel = LogSeverity.Verbose,
                 DefaultRunMode = RunMode.Async
-            }));
+            }))
+            .AddSingleton<CommandHandlerService>()
+            .AddSingleton<BotStartupService>()
+            .AddSingleton<LoggingService>()
+            .AddSingleton(Configuration);
         }
     }
 }
