@@ -32,9 +32,41 @@ namespace DiscordSmashBot.Services
             _commands.Log += OnLogAsync;
         }
 
+        /// <summary>
+        /// Writes a log event to both a text file and the console
+        /// </summary>
+        /// <param name="logMsg"></param>
+        /// <returns></returns>
         private Task OnLogAsync(LogMessage logMsg)
         {
+            CreateLogDirectoryAndFileIfNotExist();
 
+            // This basic logging will keep track of any action that's logged like any other logging system: if there's an exception, it'll be printed,
+            // but if the log message Exception property is null (i.e., nothing's wrong, just logging that [x] was used), it'll log the message
+            string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{logMsg.Severity}] {logMsg.Source}: {logMsg.Exception?.ToString() ?? logMsg.Message}";
+            File.AppendAllText(LogFile, logText + Environment.NewLine);
+
+            return Console.Out.WriteLineAsync(logText);
+        }
+
+        /// <summary>
+        /// If the log directory and/or the log file do not exist, create them
+        /// </summary>
+        private void CreateLogDirectoryAndFileIfNotExist()
+        {
+            if (!Directory.Exists(LogDirectory))
+            {
+                Directory.CreateDirectory(LogDirectory);
+                Console.WriteLine($"Created log directory at '{LogDirectory}'");
+            }
+
+            if (!File.Exists(LogFile))
+            {
+                // C# 8.0 syntactic sugar: if a simple operation requires disposing, 
+                // the using statement can now be written on one line
+                using FileStream fs = File.Create(LogFile);
+                Console.WriteLine($"Created log file '{LogFile}' at '{LogDirectory}'");
+            }
         }
     }
 }
