@@ -30,9 +30,30 @@ namespace DiscordSmashBot.Services
             _discordClient.MessageReceived += OnMessageReceivedAsync;
         }
 
-        private async Task OnMessageReceivedAsync(SocketMessage arg)
+        private async Task OnMessageReceivedAsync(SocketMessage s)
         {
-            throw new NotImplementedException();
+            if (!(s is SocketUserMessage msg))
+            {
+                return;
+            }
+
+            if (msg.Author.Id == _discordClient.CurrentUser.Id)
+            {
+                return;
+            }
+
+            var msgContext = new SocketCommandContext(_discordClient, msg);
+            int argPos = 0;
+
+            if (msg.HasStringPrefix(_configuration["Prefix"], ref argPos) || msg.HasMentionPrefix(_discordClient.CurrentUser, ref argPos))
+            {
+                var result = await _commands.ExecuteAsync(msgContext, argPos, _provider);
+
+                if (!result.IsSuccess)
+                {
+                    await msgContext.Channel.SendMessageAsync(result.ToString());
+                }
+            }
         }
     }
 }
