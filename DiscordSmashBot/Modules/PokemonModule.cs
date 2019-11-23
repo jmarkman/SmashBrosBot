@@ -12,6 +12,11 @@ namespace DiscordSmashBot.Modules
     {
         private readonly PokemonApiService pokemonApi;
 
+        public PokemonModule(PokemonApiService pkmnApiService)
+        {
+            pokemonApi = pkmnApiService;
+        }
+
         [Command("pokedex")]
         public async Task GetPokedexEntryFor(string pokemon)
         {
