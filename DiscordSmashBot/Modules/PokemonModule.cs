@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using DiscordSmashBot.ApiService;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,16 @@ namespace DiscordSmashBot.Modules
         public async Task GetPokedexEntryFor(string pokemon)
         {
             var entry = await pokemonApi.GetPokedexEntryAsyncFor(pokemon);
-            await ReplyAsync(entry.ToString());
+
+            var pokedexEntry = new EmbedBuilder
+            {
+                Title = $"Pokedex Entry for {pokemon}",
+                Color = Color.Red,
+                Description = entry.ToString()
+
+            }.Build();
+
+            await ReplyAsync(embed: pokedexEntry);
         }
     }
 }
