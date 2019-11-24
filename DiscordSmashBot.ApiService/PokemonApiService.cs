@@ -27,7 +27,7 @@ namespace DiscordSmashBot.ApiService
         /// </summary>
         /// <param name="pokemonName">The name of the pokemon, which should be formatted as lowercase</param>
         /// <returns></returns>
-        public async Task<PokemonFlavorTextEntry> GetPokedexEntryAsyncFor(string pokemonName)
+        public async Task<PokedexEntry> GetPokedexEntryAsyncFor(string pokemonName)
         {
             // Clean any extra space from around the name and make sure it's in lower-case
             // or else the API throws a fit in the form of a 404 Not Found
@@ -40,14 +40,15 @@ namespace DiscordSmashBot.ApiService
                 // Select a random flavor text entry to be used
                 var flavorTextDataObject = allFlavorTextEnglish[rnd.Next(allFlavorTextEnglish.Count)];
 
-                var formattedVersionName = await GetFormattedGameVersionNameInEnglishAsync(pkmnClient, flavorTextDataObject);
+                var englishFormattedGameVersion = await GetFormattedGameVersionNameInEnglishAsync(pkmnClient, flavorTextDataObject);
+
+                var englishFormattedPokemonName = await GetFormattedEnglishPokemonNameAsync(pkmnClient, formattedPokemonName);
                                
-                return new PokemonFlavorTextEntry
+                return new PokedexEntry
                 {
-                    // TODO: Get the name of the pokemon from a property from the Species object
-                    PokemonName = pokemonName,
-                    PokedexEntry = RemoveNewLinesFromFlavorText(flavorTextDataObject.FlavorText),
-                    CameFrom = formattedVersionName
+                    PokemonName = englishFormattedPokemonName,
+                    FlavorText = RemoveNewLinesFromFlavorText(flavorTextDataObject.FlavorText),
+                    CameFrom = englishFormattedGameVersion
                 };
             }
         }
@@ -81,6 +82,21 @@ namespace DiscordSmashBot.ApiService
             // In order to get the properly formatted name from the API, we need to get the Version object from the resource
             var flavorTextVersion = await client.GetResourceAsync(flavorText.Version);
             return flavorTextVersion.Names.Where(x => x.Language.Name == "en").SingleOrDefault().Name;
+        }
+
+        /// <summary>
+        /// Fetch the formatted name of the pokemon being queried
+        /// </summary>
+        /// <param name="client">The PokeAPI client currently in use</param>
+        /// <param name="pokemonName">The name of the pokemon as a search term submitted by the end user</param>
+        /// <returns></returns>
+        private async Task<string> GetFormattedEnglishPokemonNameAsync(PokeApiClient client, string pokemonName)
+        {
+            var pokemonApiObject = await client.GetResourceAsync<Pokemon>(pokemonName);
+            var pokemonSpeciesObject = await client.GetResourceAsync(pokemonApiObject.Species);
+            var englishName = pokemonSpeciesObject.Names.Where(x => x.Language.Name == "en").Select(y => y.Name).Single();
+
+            return englishName;
         }
 
         /// <summary>

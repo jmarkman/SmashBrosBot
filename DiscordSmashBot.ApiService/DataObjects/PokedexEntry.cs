@@ -4,16 +4,18 @@ using System.Text;
 
 namespace DiscordSmashBot.ApiService.DataObjects
 {
-    public class PokemonFlavorTextEntry
+    public class PokedexEntry
     {
         /// <summary>
         /// The name of the Pokemon
         /// </summary>
         public string PokemonName { get; set; }
+
         /// <summary>
         /// The associated Pokedex entry that Pokemon has
         /// </summary>
-        public string PokedexEntry { get; set; }
+        public string FlavorText { get; set; }
+
         /// <summary>
         /// The game where said Pokedex entry came from
         /// </summary>
@@ -21,7 +23,7 @@ namespace DiscordSmashBot.ApiService.DataObjects
 
         public override string ToString()
         {
-            return $"Pokemon: {PokemonName}{Environment.NewLine}Pokedex Entry: {PokedexEntry}{Environment.NewLine}(This entry came from {CameFrom})";
+            return $"Pokemon: {PokemonName}{Environment.NewLine}Pokedex Entry: {FlavorText}{Environment.NewLine}(This entry came from {CameFrom})";
         }
     }
 }
