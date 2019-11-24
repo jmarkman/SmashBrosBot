@@ -7,6 +7,11 @@ namespace DiscordSmashBot.ApiService.DataObjects
     public class PokedexEntry
     {
         /// <summary>
+        /// The URL to the Pokemon's sprite hosted by the PokeAPI github repo
+        /// </summary>
+        public string SpriteUrl { get; set; }
+
+        /// <summary>
         /// The name of the Pokemon
         /// </summary>
         public string PokemonName { get; set; }

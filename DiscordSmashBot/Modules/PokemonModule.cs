@@ -25,6 +25,7 @@ namespace DiscordSmashBot.Modules
 
             var pokedexEntry = new EmbedBuilder
             {
+                ThumbnailUrl = entry.SpriteUrl,
                 Title = $"Pokedex Entry for: {entry.PokemonName}",
                 Color = Color.Red,
                 Description = entry.FlavorText

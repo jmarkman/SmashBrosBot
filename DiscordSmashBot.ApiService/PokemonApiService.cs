@@ -35,6 +35,8 @@ namespace DiscordSmashBot.ApiService
 
             using (PokeApiClient pkmnClient = new PokeApiClient())
             {
+                var pokemonSprite = await GetFrontDefaultPokemonSpriteImageUrlAsync(pkmnClient, formattedPokemonName);
+
                 var allFlavorTextEnglish = await GetAllEnglishPokedexEntriesAsync(pkmnClient, formattedPokemonName);
 
                 // Select a random flavor text entry to be used
@@ -46,6 +48,7 @@ namespace DiscordSmashBot.ApiService
                                
                 return new PokedexEntry
                 {
+                    SpriteUrl = pokemonSprite,
                     PokemonName = englishFormattedPokemonName,
                     FlavorText = RemoveNewLinesFromFlavorText(flavorTextDataObject.FlavorText),
                     CameFrom = englishFormattedGameVersion
@@ -97,6 +100,19 @@ namespace DiscordSmashBot.ApiService
             var englishName = pokemonSpeciesObject.Names.Where(x => x.Language.Name == "en").Select(y => y.Name).Single();
 
             return englishName;
+        }
+
+        /// <summary>
+        /// Fetch the "front_default" image URL that represents the pokemon's forward-facing in-game sprite
+        /// </summary>
+        /// <param name="client">The PokeAPI client currently in use</param>
+        /// <param name="pokemonName">The name of the pokemon as a search term submitted by the end user</param>
+        /// <returns></returns>
+        private async Task<string> GetFrontDefaultPokemonSpriteImageUrlAsync(PokeApiClient client, string pokemonName)
+        {
+            var pokemonApiObject = await client.GetResourceAsync<Pokemon>(pokemonName);
+
+            return pokemonApiObject.Sprites.FrontDefault;
         }
 
         /// <summary>
