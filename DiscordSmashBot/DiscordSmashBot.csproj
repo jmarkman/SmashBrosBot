@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DiscordSmashBot.ApiService\DiscordSmashBot.ApiService.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Configuration\appSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -49,6 +49,7 @@ namespace DiscordSmashBot.Services
             {
                 var result = await _commands.ExecuteAsync(msgContext, argPos, _provider);
 
+                // TODO: Ask how other libraries (i.e., MODIX for the C# discord) handle unknown commands
                 if (!result.IsSuccess)
                 {
                     await msgContext.Channel.SendMessageAsync(result.ToString());

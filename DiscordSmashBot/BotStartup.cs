@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DiscordSmashBot.ApiService;
 using DiscordSmashBot.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +48,7 @@ namespace DiscordSmashBot
             // Start the logging service and command handling service; other services that aren't calling
             // methods immediately after construction will follow these GetRequiredService calls
             provider.GetRequiredService<LoggingService>();
+            provider.GetRequiredService<PokemonApiService>();
             provider.GetRequiredService<CommandHandlerService>();
 
             // Start the bot: get API token, log in to bot account, begin websocket communication
@@ -78,6 +80,7 @@ namespace DiscordSmashBot
             .AddSingleton<CommandHandlerService>()
             .AddSingleton<BotStartupService>()
             .AddSingleton<LoggingService>()
+            .AddSingleton<PokemonApiService>()
             .AddSingleton(Configuration);
         }
     }
