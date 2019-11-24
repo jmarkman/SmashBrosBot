@@ -25,11 +25,13 @@ namespace DiscordSmashBot.Modules
 
             var pokedexEntry = new EmbedBuilder
             {
-                Title = $"Pokedex Entry for {pokemon}",
+                Title = $"Pokedex Entry for {entry.PokemonName}",
                 Color = Color.Red,
-                Description = entry.ToString()
-
-            }.Build();
+                Description = entry.PokedexEntry
+            }
+            .WithFooter(footer => footer.Text = $"Game Version: Pokemon {entry.CameFrom}")
+            .WithCurrentTimestamp()
+            .Build();
 
             await ReplyAsync(embed: pokedexEntry);
         }

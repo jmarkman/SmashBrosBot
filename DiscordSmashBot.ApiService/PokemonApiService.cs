@@ -38,15 +38,15 @@ namespace DiscordSmashBot.ApiService
                 var allFlavorTextEnglish = await GetAllEnglishPokedexEntriesAsync(pkmnClient, formattedPokemonName);
 
                 // Select a random flavor text entry to be used
-                var flavorText = allFlavorTextEnglish[rnd.Next(allFlavorTextEnglish.Count)];
+                var flavorTextDataObject = allFlavorTextEnglish[rnd.Next(allFlavorTextEnglish.Count)];
 
-                var formattedVersionName = await GetFormattedGameVersionNameInEnglishAsync(pkmnClient, flavorText);
+                var formattedVersionName = await GetFormattedGameVersionNameInEnglishAsync(pkmnClient, flavorTextDataObject);
                                
                 return new PokemonFlavorTextEntry
                 {
                     // TODO: Get the name of the pokemon from a property from the Species object
                     PokemonName = pokemonName,
-                    PokedexEntry = flavorText.FlavorText,
+                    PokedexEntry = RemoveNewLinesFromFlavorText(flavorTextDataObject.FlavorText),
                     CameFrom = formattedVersionName
                 };
             }
@@ -81,6 +81,16 @@ namespace DiscordSmashBot.ApiService
             // In order to get the properly formatted name from the API, we need to get the Version object from the resource
             var flavorTextVersion = await client.GetResourceAsync(flavorText.Version);
             return flavorTextVersion.Names.Where(x => x.Language.Name == "en").SingleOrDefault().Name;
+        }
+
+        /// <summary>
+        /// Removes extraneous newline characters (\n) from the pokedex entry 
+        /// </summary>
+        /// <param name="flavorText">The pokedex entry to be cleaned of newline characters</param>
+        /// <returns>The formatted string, free of newline characters</returns>
+        private string RemoveNewLinesFromFlavorText(string flavorText)
+        {
+            return flavorText.Replace('\n', ' ');
         }
     }
 }
