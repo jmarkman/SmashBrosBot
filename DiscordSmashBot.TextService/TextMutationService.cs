@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DiscordSmashBot.TextService
 {
@@ -49,7 +50,7 @@ namespace DiscordSmashBot.TextService
         /// <returns></returns>
         private List<string> SplitInputIntoSingularWords(string input)
         {
-            throw new NotImplementedException();
+            return input.Split(' ').ToList();
         }
 
         /// <summary>
@@ -60,6 +61,14 @@ namespace DiscordSmashBot.TextService
         /// <returns></returns>
         private string ConvertCharactersToRegionalIndicator(string input)
         {
+            // regex to detect that input string contains alphanumeric chars and acceptable symbols
+
+            // if regex is not valid, throw exception
+
+            // for each char in word (since we KNOW it's an acceptable word as defined by our criteria)
+            // if char = azAZ, replace with regional indicator
+            // if char = number 0-9, replace with 0-9 emoticon
+
             throw new NotImplementedException();
         }
 
