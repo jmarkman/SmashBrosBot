@@ -61,15 +61,61 @@ namespace DiscordSmashBot.TextService
         /// <returns></returns>
         private string ConvertCharactersToRegionalIndicator(string input)
         {
+            var regionalEmoteResult = string.Empty;
             // regex to detect that input string contains alphanumeric chars and acceptable symbols
 
-            // if regex is not valid, throw exception
+            // if regex is not valid, throw exception 
+            // this should? prevent people trying to send unsupported characters, i.e.,
+            // turkish i (don't think most discord users know this one), 日本 (discord users
+            // might be able to send japanese/chinese/korean chars)
 
             // for each char in word (since we KNOW it's an acceptable word as defined by our criteria)
-            // if char = azAZ, replace with regional indicator
-            // if char = number 0-9, replace with 0-9 emoticon
+            for (int i = 0; i < input.Length; i++)
+            {
+                var currentCharacter = input[i];
 
-            throw new NotImplementedException();
+                if (char.IsLetter(currentCharacter))
+                {
+                    // if char = azAZ, replace with regional indicator
+                    regionalEmoteResult += $"{_regionalIndicator}{currentCharacter}:";
+                }
+                else if (char.IsDigit(currentCharacter))
+                {
+                    // if char = number 0-9, replace with 0-9 emoticon
+                    regionalEmoteResult += $"{ConvertDigitToEmoticon(currentCharacter)}";
+                }
+                else
+                {
+                    // TODO: test what happens here if it's something like "Banjo-Kazooie"
+                    regionalEmoteResult += currentCharacter;
+                }
+            }
+
+            return regionalEmoteResult;
+        }
+
+        /// <summary>
+        /// Given a number 0-9, return the emoticon text that represents that number
+        /// </summary>
+        /// <param name="numericChar">The character from the current word being parsed</param>
+        /// <returns>The emoticon textual shortcut for the provided number</returns>
+        private string ConvertDigitToEmoticon(char numericChar)
+        {
+            Dictionary<char, string> charToEmoticonDict = new Dictionary<char, string>()
+            {
+                { '0', ":zero:" },
+                { '1', ":one:" },
+                { '2', ":two:" },
+                { '3', ":three:" },
+                { '4', ":four:" },
+                { '5', ":five:" },
+                { '6', ":six:" },
+                { '7', ":seven:" },
+                { '8', ":eight:" },
+                { '9', ":nine:" },
+            };
+
+            return charToEmoticonDict[numericChar];
         }
 
         /// <summary>
