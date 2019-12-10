@@ -36,30 +36,63 @@ namespace DiscordSmashBot.TextService
 
             var wordsInInput = SplitInputIntoSingularWords(input);
 
-
+            regionalIndicatorOutput = ConcatenateFormattedWords(wordsInInput);
 
             return regionalIndicatorOutput;
         }
 
+        /// <summary>
+        /// Given multiple words in a string, split the string into the words that
+        /// make up said string
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         private List<string> SplitInputIntoSingularWords(string input)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// The meat and potatoes: converts each character in the word to its regional
+        /// indicator variant
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         private string ConvertCharactersToRegionalIndicator(string input)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Discord messages have a character limit of 2000, check the final message and
+        /// make sure that
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private bool IsEndResultWithinCharacterLimit(string input)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// After converting each word's letters into regional indicator version if applicable,
+        /// build the result by attaching each fomratted word together
+        /// </summary>
+        /// <param name="formattedWords"></param>
+        /// <returns></returns>
         private string ConcatenateFormattedWords(List<string> formattedWords)
         {
             var concatenatedWord = string.Empty;
 
+            // If no words were provided (somehow), catch this
             if (formattedWords.Count == 0)
             {
-
+                // throw exception or return? will temporarily just return empty string for now
+                return string.Empty;
             }           
 
+            // For each word in the list of formatted words, convert it to its regional indicator form,
+            // and concatenate it to the empty string; we'll use to return the final product
             for (int i = 0; i < formattedWords.Count; i++)
             {
                 var formattedWord = ConvertCharactersToRegionalIndicator(formattedWords[i]);
@@ -70,6 +103,13 @@ namespace DiscordSmashBot.TextService
                 }
 
                 concatenatedWord += $" {formattedWord}";
+            }
+
+            // Make sure that our final product is within the 2k character discord limit
+            // TOOD: Probably should balk earlier at input that might hit the 2k limit
+            if (!IsEndResultWithinCharacterLimit(concatenatedWord))
+            {
+                return string.Empty;
             }
 
             return concatenatedWord;
