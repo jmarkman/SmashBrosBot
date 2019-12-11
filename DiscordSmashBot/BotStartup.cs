@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DiscordSmashBot.ApiService;
 using DiscordSmashBot.Services;
+using DiscordSmashBot.TextService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
@@ -81,6 +82,7 @@ namespace DiscordSmashBot
             .AddSingleton<BotStartupService>()
             .AddSingleton<LoggingService>()
             .AddSingleton<PokemonApiService>()
+            .AddSingleton<TextMutationService>()
             .AddSingleton(Configuration);
         }
     }

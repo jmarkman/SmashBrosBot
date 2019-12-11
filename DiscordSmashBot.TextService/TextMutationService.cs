@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DiscordSmashBot.TextService
 {
@@ -62,12 +63,20 @@ namespace DiscordSmashBot.TextService
         private string ConvertCharactersToRegionalIndicator(string input)
         {
             var regionalEmoteResult = string.Empty;
+
             // regex to detect that input string contains alphanumeric chars and acceptable symbols
+            // accept: letters a-z (in caps as well, doesn't matter), digits 0-9, dash, underscore, exclamation, question mark
+            Match inputMatch = Regex.Match(input, @"^[a-zA-Z0-9\s\-\\_\!\?]*$", RegexOptions.Multiline);
 
             // if regex is not valid, throw exception 
             // this should? prevent people trying to send unsupported characters, i.e.,
             // turkish i (don't think most discord users know this one), 日本 (discord users
             // might be able to send japanese/chinese/korean chars)
+            if (!inputMatch.Success)
+            {
+                // TODO: throw in the future?
+                return regionalEmoteResult;
+            }
 
             // for each char in word (since we KNOW it's an acceptable word as defined by our criteria)
             for (int i = 0; i < input.Length; i++)
@@ -126,7 +135,12 @@ namespace DiscordSmashBot.TextService
         /// <returns></returns>
         private bool IsEndResultWithinCharacterLimit(string input)
         {
-            throw new NotImplementedException();
+            if (input.Length < 2000)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -156,8 +170,10 @@ namespace DiscordSmashBot.TextService
                 {
                     concatenatedWord += formattedWord;
                 }
-
-                concatenatedWord += $" {formattedWord}";
+                else
+                {
+                    concatenatedWord += $" {formattedWord}";
+                }
             }
 
             // Make sure that our final product is within the 2k character discord limit
