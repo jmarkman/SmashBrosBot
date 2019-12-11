@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -86,12 +87,16 @@ namespace DiscordSmashBot.TextService
                 if (char.IsLetter(currentCharacter))
                 {
                     // if char = azAZ, replace with regional indicator
-                    regionalEmoteResult += $"{_regionalIndicator}{currentCharacter}:";
+                    regionalEmoteResult += $"{_regionalIndicator}{char.ToLower(currentCharacter)}:";
                 }
                 else if (char.IsDigit(currentCharacter))
                 {
                     // if char = number 0-9, replace with 0-9 emoticon
                     regionalEmoteResult += $"{ConvertDigitToEmoticon(currentCharacter)}";
+                }
+                else if (char.IsPunctuation(currentCharacter))
+                {
+                    regionalEmoteResult += $"{ConvertPunctuationToEmoticon(currentCharacter)}";
                 }
                 else
                 {
@@ -125,6 +130,23 @@ namespace DiscordSmashBot.TextService
             };
 
             return charToEmoticonDict[numericChar];
+        }
+
+        /// <summary>
+        /// Given a valid punctuation character, return the emoticon that represents said character
+        /// </summary>
+        /// <param name="punctuationChar">The character from the word being parsed</param>
+        /// <returns>The emoticon textual shortcut for the provided punctuation mark</returns>
+        private string ConvertPunctuationToEmoticon(char punctuationChar)
+        {
+            Dictionary<char, string> punctuationToEmoticonDict = new Dictionary<char, string>()
+            {
+                { '!', ":exclamation" },
+                { '?', ":question:" },
+                { '-', ":heavy_minus_sign:" }
+            };
+
+            return punctuationToEmoticonDict[punctuationChar];
         }
 
         /// <summary>
@@ -172,7 +194,7 @@ namespace DiscordSmashBot.TextService
                 }
                 else
                 {
-                    concatenatedWord += $" {formattedWord}";
+                    concatenatedWord += $"\t{formattedWord}";
                 }
             }
 
