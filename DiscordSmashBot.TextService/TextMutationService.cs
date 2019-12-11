@@ -23,13 +23,12 @@ namespace DiscordSmashBot.TextService
         /// <returns>The provided sentence or word</returns>
         public string ConvertInputToRegionalIndicator(string input)
         {
-            var regionalIndicatorOutput = string.Empty;
-
-            if (string.IsNullOrWhiteSpace(input))
+            if (!IsInputValid(input))
             {
-                Console.WriteLine($"{nameof(TextMutationService)}.{nameof(ConvertInputToRegionalIndicator)}(): The provided input ('{input}') was either null or empty!");
                 return string.Empty;
             }
+
+            string regionalIndicatorOutput;
 
             if (InputIsSingleWord(input))
             {
@@ -64,20 +63,6 @@ namespace DiscordSmashBot.TextService
         private string ConvertCharactersToRegionalIndicator(string input)
         {
             var regionalEmoteResult = string.Empty;
-
-            // regex to detect that input string contains alphanumeric chars and acceptable symbols
-            // accept: letters a-z (in caps as well, doesn't matter), digits 0-9, dash, underscore, exclamation, question mark
-            Match inputMatch = Regex.Match(input, @"^[a-zA-Z0-9\s\-\\_\!\?]*$", RegexOptions.Multiline);
-
-            // if regex is not valid, throw exception 
-            // this should? prevent people trying to send unsupported characters, i.e.,
-            // turkish i (don't think most discord users know this one), 日本 (discord users
-            // might be able to send japanese/chinese/korean chars)
-            if (!inputMatch.Success)
-            {
-                // TODO: throw in the future?
-                return regionalEmoteResult;
-            }
 
             // for each char in word (since we KNOW it's an acceptable word as defined by our criteria)
             for (int i = 0; i < input.Length; i++)
@@ -206,6 +191,34 @@ namespace DiscordSmashBot.TextService
             }
 
             return concatenatedWord;
+        }
+
+        /// <summary>
+        /// Ensure that the input provided by the user isn't null or whitespace and fits the
+        /// regex requirements of not having any extraenous characters that aren't a-z, A-Z,
+        /// 0-9, dashes, underscores, exclamation marks, or question marks
+        /// </summary>
+        /// <param name="input">The word or sentence from the end user</param>
+        /// <returns><see cref="true"/> if the input provided meets our criteria, <see cref="false"/> otherwise</returns>
+        private bool IsInputValid(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                Console.WriteLine($"{nameof(TextMutationService)}.{nameof(IsInputValid)}(): The provided input ('{input}') was either null or empty!");
+                return false;
+            }
+
+            // regex to detect that input string contains alphanumeric chars and acceptable symbols
+            // accept: letters a-z (in caps as well, doesn't matter), digits 0-9, dash, underscore, exclamation, question mark
+            Match inputMatch = Regex.Match(input, @"^[a-zA-Z0-9\s\-\\_\!\?]*$", RegexOptions.Multiline);
+
+            if (!inputMatch.Success)
+            {
+                Console.WriteLine($"{nameof(TextMutationService)}.{nameof(IsInputValid)}(): The provided input ('{input}') did not fit the regex criteria");
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
